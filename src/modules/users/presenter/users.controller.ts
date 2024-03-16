@@ -8,12 +8,16 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from '../domain/users.service';
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
 import { UserResource } from './resources';
+import { RoleGuard } from 'src/common/guards/role.guard';
+import { DRole } from 'src/common/decorators';
+import { JwtPayload } from 'src/common/entities';
 
 @Controller('/users')
 export class UsersController {
@@ -52,5 +56,12 @@ export class UsersController {
   async getUser(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.userService.findOne(id);
     return new UserResource(user);
+  }
+
+  @UseGuards(RoleGuard)
+  @DRole(Role.ADMIN)
+  @Get()
+  me(@AuthenticatedUser() user: JwtPayload) {
+    return user;
   }
 }
