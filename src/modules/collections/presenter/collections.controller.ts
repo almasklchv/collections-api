@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Param,
   ParseUUIDPipe,
@@ -59,5 +60,12 @@ export class CollectionsController {
       body,
     );
     return updatedCollection;
+  }
+
+  @Delete('/:id')
+  async deleteCollection(@Param('id', ParseUUIDPipe) id: string) {
+    const deletedCollection =
+      await this.collectionsService.deleteCollection(id);
+    return deletedCollection;
   }
 }

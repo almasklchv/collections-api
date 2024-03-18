@@ -35,4 +35,10 @@ export class CollectionsService {
     );
     return collection;
   }
+
+  async deleteCollection(id: string) {
+    const deletedCollection =
+      await this.collectionsRepository.deleteCollection(id);
+    return deletedCollection;
+  }
 }

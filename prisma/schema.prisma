@@ -60,7 +60,7 @@ model Collection {
 
 model Item {
   id           String     @id @default(cuid())
-  collection   Collection @relation(fields: [collectionId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId String     @map("collection_id")
   title        String
   tags         String[]
