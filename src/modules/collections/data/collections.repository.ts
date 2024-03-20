@@ -47,7 +47,7 @@ export class CollectionsRepository extends BaseRepository {
       where: { id },
       data: {
         items: {
-          create: [item],
+          create: [{ ...item, userId: collection.userId }],
         },
       },
     });
