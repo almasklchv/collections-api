@@ -38,6 +38,7 @@ export class AuthService extends BaseRepository {
       passwordHash: dto.password,
       name: dto.name,
     };
+
     return this.userService.createUser(user as User).catch((err) => {
       this.logger.error(err);
       return null;
@@ -52,7 +53,7 @@ export class AuthService extends BaseRepository {
         return null;
       });
 
-    if (!user || !compare(dto.password, user.passwordHash)) {
+    if (!user || !(await compare(dto.password, user.passwordHash))) {
       throw new UnauthorizedException();
     }
     return this.generateTokens(user, agent);
