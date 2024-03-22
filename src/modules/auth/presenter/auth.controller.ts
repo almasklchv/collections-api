@@ -78,7 +78,7 @@ export class AuthController {
 
   @Get('/check')
   async checkAuthStatus(@Req() req: Request, @Res() res: Response) {
-    const token: string = req.cookies['accesstoken'];
+    const token: string = req.headers['authorization'];
     if (!token) {
       return res.status(HttpStatus.UNAUTHORIZED).json({ authenticated: false });
     }
