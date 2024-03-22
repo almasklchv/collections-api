@@ -29,4 +29,13 @@ export class ItemsRepository extends BaseRepository {
     if (!item) return null;
     return item;
   }
+
+  async getRecentlyAddedItems() {
+    const date24HoursAgo = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
+    const items = this.prismaService.item.findMany({
+      where: { createdAt: { gt: date24HoursAgo } },
+      orderBy: { createdAt: 'desc' },
+    });
+    return items;
+  }
 }

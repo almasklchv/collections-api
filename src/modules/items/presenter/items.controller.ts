@@ -20,6 +20,12 @@ export class ItemsController {
     private readonly collectionsService: CollectionsService,
   ) {}
 
+  @Get('/recent')
+  async getRecentlyAddedItems() {
+    const items = await this.itemsService.getRecentlyAddedItems();
+    return items;
+  }
+
   @Get('/:id')
   async getItem(@Param('id', ParseUUIDPipe) id: string) {
     const item = await this.itemsService.findOne(id);

@@ -17,4 +17,8 @@ export class ItemsService {
   findOne(id: string) {
     return this.itemsRepository.findOne(id);
   }
+
+  getRecentlyAddedItems() {
+    return this.itemsRepository.getRecentlyAddedItems();
+  }
 }
