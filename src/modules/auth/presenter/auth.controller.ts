@@ -6,6 +6,7 @@ import {
   Get,
   HttpStatus,
   Post,
+  Req,
   Res,
   UnauthorizedException,
   UseInterceptors,
@@ -13,13 +14,14 @@ import {
 import { AuthService } from '../domain/auth.service';
 import { SignUpBody } from './bodies/sign-up.body';
 import { SignInBody } from './bodies';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Tokens } from 'src/common/entities/tokens.interface';
 import { ConfigService } from '@nestjs/config';
 import { Cookie, Public, UserAgent } from 'src/common/decorators';
 import { UserResource } from 'src/modules/users/presenter/resources';
 
 const REFRESH_TOKEN = 'refreshtoken';
+const ACCESS_TOKEN = 'accesstoken';
 
 @Public()
 @Controller('/auth')
@@ -66,7 +68,23 @@ export class AuthController {
       secure: true,
       expires: new Date(),
     });
+    res.cookie(ACCESS_TOKEN, '', {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(),
+    });
     res.sendStatus(HttpStatus.OK);
+  }
+
+  @Get('/check')
+  async checkAuthStatus(@Req() req: Request, @Res() res: Response) {
+    const token: string = req.cookies['accesstoken'];
+    if (!token) {
+      return res.status(HttpStatus.UNAUTHORIZED).json({ authenticated: false });
+    }
+
+    const isValid = await this.authService.checkAuthToken(token.slice(7));
+    return res.status(HttpStatus.OK).json({ authenticated: isValid });
   }
 
   @Get('/refresh')
@@ -93,6 +111,13 @@ export class AuthController {
       httpOnly: true,
       sameSite: 'lax',
       expires: new Date(tokens.refreshToken.expiresAt),
+      secure:
+        this.configService.get('NODE_ENV', 'development') === 'production',
+      path: '/',
+    });
+    res.cookie(ACCESS_TOKEN, tokens.accessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
       secure:
         this.configService.get('NODE_ENV', 'development') === 'production',
       path: '/',
