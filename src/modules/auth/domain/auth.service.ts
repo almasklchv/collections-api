@@ -59,6 +59,15 @@ export class AuthService extends BaseRepository {
     return this.generateTokens(user, agent);
   }
 
+  async checkAuthToken(token: string): Promise<boolean> {
+    try {
+      const payload = this.jwtService.verify(token);
+      return !!payload;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async refreshTokens(refreshToken: string, agent: string): Promise<Tokens> {
     const token = await this.prismaService.token.findUnique({
       where: { token: refreshToken },
