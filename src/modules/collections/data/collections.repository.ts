@@ -60,4 +60,32 @@ export class CollectionsRepository extends BaseRepository {
     });
     return deletedCollection;
   }
+
+  async getFiveBigCollections() {
+    const collectionsWithItems = await this.prismaService.collection.findMany({
+      include: {
+        items: true,
+      },
+    });
+
+    const collectionsWithItemCount = collectionsWithItems.map((collection) => ({
+      ...collection,
+      itemCount: collection.items.length,
+    }));
+
+    const sortedCollections = collectionsWithItemCount.sort(
+      (a, b) => b.itemCount - a.itemCount,
+    );
+
+    const topFiveCollections = sortedCollections.slice(0, 5);
+
+    return topFiveCollections;
+  }
+
+  async getCollectionsByUserId(userId: string) {
+    const collections = await this.prismaService.collection.findMany({
+      where: { userId: userId },
+    });
+    return collections;
+  }
 }

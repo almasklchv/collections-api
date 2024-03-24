@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   ForbiddenException,
+  Get,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -10,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CollectionsService } from '../domain/collections.service';
 import { Collection, Item, User } from '@prisma/client';
-import { AuthenticatedUser } from 'src/common/decorators';
+import { AuthenticatedUser, Public } from 'src/common/decorators';
 
 @Controller('collections')
 export class CollectionsController {
@@ -26,6 +27,21 @@ export class CollectionsController {
       user,
     );
     return collection;
+  }
+
+  @Public()
+  @Get('/big')
+  async getFiveBigCollections() {
+    const collections = await this.collectionsService.getFiveBigCollections();
+    return collections;
+  }
+
+  @Public()
+  @Get('/:id')
+  async getCollectionsByUserId(@Param('id', ParseUUIDPipe) id: string) {
+    const collections =
+      await this.collectionsService.getCollectionsByUserId(id);
+    return collections;
   }
 
   @Patch('/:id')

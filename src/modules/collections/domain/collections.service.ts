@@ -41,4 +41,16 @@ export class CollectionsService {
       await this.collectionsRepository.deleteCollection(id);
     return deletedCollection;
   }
+
+  async getFiveBigCollections() {
+    const collections =
+      await this.collectionsRepository.getFiveBigCollections();
+    return collections;
+  }
+
+  async getCollectionsByUserId(userId: string) {
+    const collections =
+      await this.collectionsRepository.getCollectionsByUserId(userId);
+    return collections;
+  }
 }

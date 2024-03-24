@@ -49,7 +49,7 @@ export class UsersController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:id')
-  async getUser(@Param('id', ParseUUIDPipe) id: string) {
+  async getUser(@Param('id') id: string) {
     const user = await this.userService.findOne(id);
     return new UserResource(user);
   }
