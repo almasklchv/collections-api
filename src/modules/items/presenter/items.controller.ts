@@ -27,6 +27,13 @@ export class ItemsController {
     return items;
   }
 
+  @Public()
+  @Get('/get-all/:id')
+  async getItemsByCollectionId(@Param('id', ParseUUIDPipe) id: string) {
+    const items = await this.itemsService.getItemsByCollectionId(id);
+    return items;
+  }
+
   @Get('/:id')
   async getItem(@Param('id', ParseUUIDPipe) id: string) {
     const item = await this.itemsService.findOne(id);

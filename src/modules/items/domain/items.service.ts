@@ -14,11 +14,15 @@ export class ItemsService {
     return this.itemsRepository.deleteItem(id);
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.itemsRepository.findOne(id);
   }
 
-  getRecentlyAddedItems() {
+  async getRecentlyAddedItems() {
     return this.itemsRepository.getRecentlyAddedItems();
+  }
+
+  async getItemsByCollectionId(id: string) {
+    return this.itemsRepository.getItemsByCollectionId(id);
   }
 }
