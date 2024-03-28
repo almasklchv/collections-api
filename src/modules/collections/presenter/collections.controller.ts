@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   ForbiddenException,
+  Get,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -10,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CollectionsService } from '../domain/collections.service';
 import { Collection, Item, User } from '@prisma/client';
-import { AuthenticatedUser } from 'src/common/decorators';
+import { AuthenticatedUser, Public } from 'src/common/decorators';
 
 @Controller('collections')
 export class CollectionsController {
@@ -26,6 +27,28 @@ export class CollectionsController {
       user,
     );
     return collection;
+  }
+
+  @Public()
+  @Get('/big')
+  async getFiveBigCollections() {
+    const collections = await this.collectionsService.getFiveBigCollections();
+    return collections;
+  }
+
+  @Public()
+  @Get('/:id/by-collection-id')
+  async getCollectionById(@Param('id', ParseUUIDPipe) id: string) {
+    const collection = await this.collectionsService.findOne(id);
+    return collection;
+  }
+
+  @Public()
+  @Get('/:id')
+  async getCollectionsByUserId(@Param('id', ParseUUIDPipe) id: string) {
+    const collections =
+      await this.collectionsService.getCollectionsByUserId(id);
+    return collections;
   }
 
   @Patch('/:id')
@@ -63,7 +86,14 @@ export class CollectionsController {
   }
 
   @Delete('/:id')
-  async deleteCollection(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteCollection(
+    @Param('id', ParseUUIDPipe) id: string,
+    @AuthenticatedUser() user: User,
+  ) {
+    const collection = await this.collectionsService.findOne(id);
+    if (collection.userId !== user.id && user.role !== 'ADMIN') {
+      throw new ForbiddenException();
+    }
     const deletedCollection =
       await this.collectionsService.deleteCollection(id);
     return deletedCollection;

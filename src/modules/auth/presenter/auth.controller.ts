@@ -57,6 +57,7 @@ export class AuthController {
     @Cookie(REFRESH_TOKEN) refreshToken: string,
     @Res() res: Response,
   ) {
+    console.log(refreshToken);
     if (!refreshToken) {
       res.sendStatus(HttpStatus.OK);
       return;

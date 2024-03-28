@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ItemsService } from '../domain/items.service';
 import { Item, User } from '@prisma/client';
-import { AuthenticatedUser } from 'src/common/decorators';
+import { AuthenticatedUser, Public } from 'src/common/decorators';
 import { CollectionsService } from 'src/modules/collections/domain/collections.service';
 
 @Controller('items')
@@ -20,9 +20,17 @@ export class ItemsController {
     private readonly collectionsService: CollectionsService,
   ) {}
 
+  @Public()
   @Get('/recent')
   async getRecentlyAddedItems() {
     const items = await this.itemsService.getRecentlyAddedItems();
+    return items;
+  }
+
+  @Public()
+  @Get('/get-all/:id')
+  async getItemsByCollectionId(@Param('id', ParseUUIDPipe) id: string) {
+    const items = await this.itemsService.getItemsByCollectionId(id);
     return items;
   }
 

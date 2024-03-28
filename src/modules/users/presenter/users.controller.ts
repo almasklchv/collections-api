@@ -14,6 +14,7 @@ import { UsersService } from '../domain/users.service';
 import { User } from '@prisma/client';
 import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
 import { UserResource } from './resources';
+import { Public } from 'src/common/decorators';
 
 @Controller('/users')
 export class UsersController {
@@ -47,9 +48,10 @@ export class UsersController {
     return new UserResource(deletedUser);
   }
 
+  @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:id')
-  async getUser(@Param('id', ParseUUIDPipe) id: string) {
+  async getUser(@Param('id') id: string) {
     const user = await this.userService.findOne(id);
     return new UserResource(user);
   }

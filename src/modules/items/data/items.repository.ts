@@ -38,4 +38,11 @@ export class ItemsRepository extends BaseRepository {
     });
     return items;
   }
+
+  async getItemsByCollectionId(id: string) {
+    const items = await this.prismaService.item.findMany({
+      where: { collectionId: id },
+    });
+    return items;
+  }
 }
