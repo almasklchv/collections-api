@@ -37,6 +37,13 @@ export class CollectionsController {
   }
 
   @Public()
+  @Get('/:id/by-collection-id')
+  async getCollectionById(@Param('id', ParseUUIDPipe) id: string) {
+    const collection = await this.collectionsService.findOne(id);
+    return collection;
+  }
+
+  @Public()
   @Get('/:id')
   async getCollectionsByUserId(@Param('id', ParseUUIDPipe) id: string) {
     const collections =
@@ -79,7 +86,14 @@ export class CollectionsController {
   }
 
   @Delete('/:id')
-  async deleteCollection(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteCollection(
+    @Param('id', ParseUUIDPipe) id: string,
+    @AuthenticatedUser() user: User,
+  ) {
+    const collection = await this.collectionsService.findOne(id);
+    if (collection.userId !== user.id && user.role !== 'ADMIN') {
+      throw new ForbiddenException();
+    }
     const deletedCollection =
       await this.collectionsService.deleteCollection(id);
     return deletedCollection;
