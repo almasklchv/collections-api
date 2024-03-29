@@ -5,6 +5,7 @@ import { ItemsRepository } from './data/items.repository';
 import { PrismaService } from '../prisma/prisma.service';
 import { CollectionsService } from '../collections/domain/collections.service';
 import { CollectionsRepository } from '../collections/data/collections.repository';
+import { ItemsGateway } from './socket/items.gateway';
 
 @Module({
   controllers: [ItemsController],
@@ -14,6 +15,7 @@ import { CollectionsRepository } from '../collections/data/collections.repositor
     PrismaService,
     CollectionsService,
     CollectionsRepository,
+    ItemsGateway,
   ],
 })
 export class ItemsModule {}
